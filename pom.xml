@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.kk</groupId>
-  <artifactId>maven-web-application-kkfunda</artifactId>
+  <artifactId>maven-web-application-md-prassadh</artifactId>
   <version>19.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
@@ -14,11 +14,11 @@
   <description>Maven Web Project for Java Project</description>
 
   <organization>
-    <name>KK FUNDA</name>
-    <url>http://kkfunda.com</url>
+    <name> MULTI CLOUD </name>
+    <url>http://multicloud.com</url>
   </organization>
 
-  <!-- 🔒 LOCK JAVA VERSION -->
+  <!-- Java and dependency versions -->
   <properties>
     <jdk.version>17</jdk.version>
     <spring.version>5.3.34</spring.version>
@@ -53,7 +53,7 @@
       <version>${spring.version}</version>
     </dependency>
 
-    <!-- Servlet API (provided by Tomcat) -->
+    <!-- Servlet API (provided by Tomcat 9) -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -68,7 +68,7 @@
       <version>20231013</version>
     </dependency>
 
-    <!-- Test -->
+    <!-- Unit testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -83,7 +83,7 @@
 
     <plugins>
 
-      <!-- ✅ SINGLE COMPILER PLUGIN – JAVA 17 -->
+      <!-- Maven Compiler Plugin (Java 17) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -92,13 +92,6 @@
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
         </configuration>
-      </plugin>
-
-      <!-- Optional: Jetty (local dev only) -->
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.4.53.v20231009</version>
       </plugin>
 
     </plugins>
