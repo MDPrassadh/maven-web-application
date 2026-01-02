@@ -4,7 +4,7 @@ on:
 
 jobs:
   Build:
-    runs-on: [GHA-RUNNER, MDP]
+    runs-on: GHA-RUNNER
 
     steps:
       - uses: actions/checkout@v4
