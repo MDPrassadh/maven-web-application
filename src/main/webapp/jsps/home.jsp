@@ -55,7 +55,7 @@
 <body>
 
 <header>
-    <h1>Welcome to MULTI CLOUD DEVOPS</h1>
+    <h1>Welcome to AZURE CLOUD DEVOPS</h1>
     <h2>DEVOPS WITH AWS AND AZURE</h2>
 </header>
 
