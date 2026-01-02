@@ -4,8 +4,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>KK FUNDA Home Page</title>
-<link rel="icon" href="images/kkfunda.jpg">
+<title>MD PRASSADH Home Page</title>
+<link rel="icon" href="images/mdprassadh.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
     body {
@@ -55,8 +55,8 @@
 <body>
 
 <header>
-    <h1>Welcome to KK DevOps</h1>
-    <h2>KK DEVOPS WITH AWS</h2>
+    <h1>Welcome to MULTI CLOUD DEVOPS</h1>
+    <h2>DEVOPS WITH AWS AND AZURE</h2>
 </header>
 
 <div class="content">
@@ -76,11 +76,11 @@
     </div>
 
     <div>
-        <img src="images/kkfunda.jpg" alt="KK FUNDA Logo">
-        <p><strong>KK FUNDA</strong><br>
+        <img src="images/mdprassadh.jpg" alt="MD PRASSADH Logo">
+        <p><strong>MD PRASSADH</strong><br>
         Martha Halli, Bangalore<br>
         +91-9676831734<br>
-        <a href="mailto:kkeducationblr@gmail.com">Mail to KK FUNDA</a></p>
+        <a href="mailto:kkeducationblr@gmail.com">Mail to MD PRASSADH</a></p>
     </div>
 
     <p>Service: <a href="services/employee/getEmployeeDetails">Get Employee Details</a></p>
@@ -88,8 +88,8 @@
 </div>
 
 <footer>
-    KK FUNDA Training, Development Center.<br>
-    <small>© 2024 by KK FUNDA</small>
+    MD PRASSADH Training, Development Center.<br>
+    <small>© 2024 by MD PRASSADH</small>
 </footer>
 
 </body>
