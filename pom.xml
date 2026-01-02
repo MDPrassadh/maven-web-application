@@ -111,9 +111,6 @@
 	
 	<build>
 		<finalName>maven-web-application</finalName>
-		
-		
-	<build>
    <plugins>
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
