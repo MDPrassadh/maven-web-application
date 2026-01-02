@@ -18,14 +18,15 @@
     <url>http://kkfunda.com</url>
   </organization>
 
-  <!-- Java and dependency versions -->
+  <!-- CENTRAL VERSION CONTROL -->
   <properties>
-    <jdk.version>17</jdk.version>
+    <java.version>17</java.version>
     <spring.version>5.3.34</spring.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
+  <!-- DEPENDENCIES -->
   <dependencies>
 
     <!-- Spring MVC -->
@@ -53,7 +54,7 @@
       <version>${spring.version}</version>
     </dependency>
 
-    <!-- Servlet API (provided by Tomcat 9) -->
+    <!-- Tomcat provides this at runtime -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -68,7 +69,7 @@
       <version>20231013</version>
     </dependency>
 
-    <!-- Unit testing -->
+    <!-- Unit tests -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -78,27 +79,35 @@
 
   </dependencies>
 
+  <!-- BUILD PLUGINS -->
   <build>
     <finalName>maven-web-application</finalName>
 
     <plugins>
 
-      <!-- Maven Compiler Plugin (Java 17) -->
+      <!-- 1️⃣ COMPILER: Controls Java version -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
 
-      <!-- Maven WAR Plugin (REQUIRED for Java 17) -->
+      <!-- 2️⃣ WAR: Creates WAR file (Java 17 compatible) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.4.0</version>
+      </plugin>
+
+      <!-- 3️⃣ SONAR: Enables mvn sonar:sonar -->
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.11.0.3922</version>
       </plugin>
 
     </plugins>
