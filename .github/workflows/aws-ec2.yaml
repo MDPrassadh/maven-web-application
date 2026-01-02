@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  full:
-    runs-on: [self-hosted, mdp]
+  Build:
+    runs-on: [GHA-RUNNER, MDP]
 
     steps:
       - uses: actions/checkout@v4
