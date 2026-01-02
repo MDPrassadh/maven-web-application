@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MD PRASSADH Home Page</title>
+<title>MDP SIR Home Page</title>
 <link rel="icon" href="images/mdprassadh.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
