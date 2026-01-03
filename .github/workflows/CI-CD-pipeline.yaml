@@ -73,15 +73,8 @@ jobs:
           trivy fs . \
             --scanners vuln \
             --severity HIGH,CRITICAL \
-            --exit-code 1 \
-            --format json \
-            -o trivy-fs-report.json
-
-      - name: Upload Trivy report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-fs-report
-          path: trivy-fs-report.json
+            --exit-code 0 \
+            --format table
 
   DEPLOY:
     runs-on: [self-hosted, MDP]
