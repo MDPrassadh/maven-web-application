@@ -51,31 +51,38 @@ jobs:
           cache: maven
 
       - name: SonarQube Analysis
-        run: |
-          mvn sonar:sonar \
-            -Dsonar.projectKey=maven-web-application \
-            -Dsonar.projectName=maven-web-application \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean verify sonar:sonar
+
+      - name: SonarQube Quality Gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar -Dsonar.qualitygate.wait=true
 
   SECURITY-CHECK:
-  runs-on: [self-hosted, MDP]
-  needs: SONARQUBE
+    runs-on: [self-hosted, MDP]
+    needs: SONARQUBE
 
-  steps:
-    - name: Install Trivy
-      run: |
-        wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
-        sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Trivy FS Scan
-      run: |
-        trivy fs . \
-          --severity HIGH,CRITICAL \
-          --exit-code 1 \
-          --format table
+      - name: Install Trivy
+        run: |
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
+          sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
 
- 
+      - name: Trivy FS Scan
+        run: |
+          trivy fs . \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            --format json \
+            -o trivy-fs-report.json
 
-      
-
+      - name: Upload Trivy FS Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-fs-report
+          path: trivy-fs-report.json
