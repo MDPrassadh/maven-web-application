@@ -11,7 +11,7 @@ jobs:
     runs-on: [self-hosted, MDP]
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Setup Java 17
@@ -24,23 +24,18 @@ jobs:
       - name: Build WAR file
         run: mvn clean package
 
-      - name: Deploy WAR to Tomcat
-        env:
-          TOMCAT_URL: ${{ secrets.TOMCAT_URL }}
-          TOMCAT_USER: ${{ secrets.TOMCAT_USERNAME }}
-          TOMCAT_PASS: ${{ secrets.TOMCAT_PASSWORD }}
-        run: |
-          WAR=$(ls target/*.war | head -n 1)
-          curl -f -u "${TOMCAT_USER}:${TOMCAT_PASS}" \
-            --upload-file "$WAR" \
-            "${TOMCAT_URL}/manager/text/deploy?path=/maven-web-application&update=true"
+      - name: Upload WAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: war-file
+          path: target/*.war
 
   SONARQUBE:
     runs-on: [self-hosted, MDP]
     needs: BUILD
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Setup Java 17
@@ -50,12 +45,12 @@ jobs:
           distribution: temurin
           cache: maven
 
-      - name: SonarQube Analysis
+      - name: SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn clean verify sonar:sonar
 
-      - name: SonarQube Quality Gate
+      - name: SonarQube quality gate
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn sonar:sonar -Dsonar.qualitygate.wait=true
@@ -80,3 +75,24 @@ jobs:
             --severity HIGH,CRITICAL \
             --exit-code 0 \
             --format table
+
+  DEPLOY:
+    runs-on: [self-hosted, MDP]
+    needs: SECURITY-CHECK
+
+    steps:
+      - name: Download WAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: war-file
+
+      - name: Deploy WAR to Tomcat
+        env:
+          TOMCAT_URL: ${{ secrets.TOMCAT_URL }}
+          TOMCAT_USER: ${{ secrets.TOMCAT_USERNAME }}
+          TOMCAT_PASS: ${{ secrets.TOMCAT_PASSWORD }}
+        run: |
+          WAR=$(ls *.war | head -n 1)
+          curl -f -u "${TOMCAT_USER}:${TOMCAT_PASS}" \
+            --upload-file "$WAR" \
+            "${TOMCAT_URL}/manager/text/deploy?path=/maven-web-application&update=true"
