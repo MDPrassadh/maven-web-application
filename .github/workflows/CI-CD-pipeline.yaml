@@ -11,7 +11,7 @@ jobs:
     runs-on: [self-hosted, MDP]
 
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Java 17
@@ -21,21 +21,26 @@ jobs:
           distribution: temurin
           cache: maven
 
-      - name: Build application
+      - name: Build WAR file
         run: mvn clean package
 
-      - name: Upload WAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: war-file
-          path: target/*.war
+      - name: Deploy WAR to Tomcat
+        env:
+          TOMCAT_URL: ${{ secrets.TOMCAT_URL }}
+          TOMCAT_USER: ${{ secrets.TOMCAT_USERNAME }}
+          TOMCAT_PASS: ${{ secrets.TOMCAT_PASSWORD }}
+        run: |
+          WAR=$(ls target/*.war | head -n 1)
+          curl -f -u "${TOMCAT_USER}:${TOMCAT_PASS}" \
+            --upload-file "$WAR" \
+            "${TOMCAT_URL}/manager/text/deploy?path=/maven-web-application&update=true"
 
   SONARQUBE:
     runs-on: [self-hosted, MDP]
     needs: BUILD
 
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Java 17
@@ -45,22 +50,15 @@ jobs:
           distribution: temurin
           cache: maven
 
-      - name: SonarQube analysis
+      - name: SonarQube Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=maven-web-application \
-            -Dsonar.projectName=maven-web-application \
-            -Dsonar.host.url=$SONAR_HOST_URL
+        run: mvn clean verify sonar:sonar
 
-      - name: SonarQube quality gate
+      - name: SonarQube Quality Gate
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          mvn sonar:sonar -Dsonar.qualitygate.wait=true
+        run: mvn sonar:sonar -Dsonar.qualitygate.wait=true
 
   SECURITY-CHECK:
     runs-on: [self-hosted, MDP]
@@ -81,32 +79,4 @@ jobs:
             --scanners vuln \
             --severity HIGH,CRITICAL \
             --exit-code 0 \
-            --format json \
-            -o trivy-fs-report.json
-
-      - name: Upload Trivy report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-fs-report
-          path: trivy-fs-report.json
-
-  DEPLOY:
-    runs-on: [self-hosted, MDP]
-    needs: SECURITY-CHECK
-
-    steps:
-      - name: Download WAR artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: war-file
-
-      - name: Deploy to Tomcat
-        env:
-          TOMCAT_URL: ${{ secrets.TOMCAT_URL }}
-          TOMCAT_USER: ${{ secrets.TOMCAT_USERNAME }}
-          TOMCAT_PASS: ${{ secrets.TOMCAT_PASSWORD }}
-        run: |
-          WAR=$(ls *.war | head -n 1)
-          curl -f -u "$TOMCAT_USER:$TOMCAT_PASS" \
-            --upload-file "$WAR" \
-            "$TOMCAT_URL/manager/text/deploy?path=/maven-web-application&update=true"
+            --format table
