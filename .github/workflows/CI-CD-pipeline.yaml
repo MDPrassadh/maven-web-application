@@ -35,20 +35,17 @@ jobs:
     needs: BUILD
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: temurin
-          cache: maven
 
       - name: SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean verify sonar:sonar
+        run: mvn verify sonar:sonar
 
       - name: SonarQube quality gate
         env:
@@ -60,8 +57,7 @@ jobs:
     needs: SONARQUBE
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Trivy
         run: |
@@ -71,14 +67,55 @@ jobs:
       - name: Trivy filesystem scan
         run: |
           trivy fs . \
-            --scanners vuln \
             --severity HIGH,CRITICAL \
-            --exit-code 0 \
-            --format table
+            --exit-code 0
+
+  DOCKER-BUILD:
+    runs-on: [self-hosted, MDP]
+    needs: SECURITY-CHECK
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download WAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: war-file
+
+      - name: Prepare Docker build context
+        run: |
+          mkdir docker-build
+          mv *.war docker-build/maven-web-application.war
+          cp Dockerfile docker-build/
+          ls -lh docker-build
+
+      - name: Docker Login
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+            -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          cd docker-build
+          docker build -t ${{ secrets.Docker_Repository }}:${{ github.sha }} .
+
+      - name: Trivy Image Scan
+        run: |
+          trivy image \
+            ${{ secrets.Docker_Repository }}:${{ github.sha }} \
+            --severity HIGH,CRITICAL \
+            --exit-code 0
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.Docker_Repository }}:${{ github.sha }}
+          docker tag ${{ secrets.Docker_Repository }}:${{ github.sha }} \
+                     ${{ secrets.Docker_Repository }}:latest
+          docker push ${{ secrets.Docker_Repository }}:latest
 
   DEPLOY:
     runs-on: [self-hosted, MDP]
-    needs: SECURITY-CHECK
+    needs: DOCKER-BUILD
 
     steps:
       - name: Download WAR artifact
