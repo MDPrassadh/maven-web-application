@@ -59,20 +59,22 @@ jobs:
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   SECURITY-CHECK:
-    runs-on: [self-hosted, MDP]
-    needs: SONARQUBE
-    steps:
-      - name: Install Trivy
-        run: |
-          wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
-          sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
+  runs-on: [self-hosted, MDP]
+  needs: SONARQUBE
 
-      - name: Trivy FS Scan
-        run: |
-          trivy fs . \
-         --severity HIGH,CRITICAL \
-         --exit-code 1 \
-         --format table
+  steps:
+    - name: Install Trivy
+      run: |
+        wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
+        sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
+
+    - name: Trivy FS Scan
+      run: |
+        trivy fs . \
+          --severity HIGH,CRITICAL \
+          --exit-code 1 \
+          --format table
+
  
 
       
