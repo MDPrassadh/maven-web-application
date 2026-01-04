@@ -5,20 +5,22 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.kk</groupId>
-  <artifactId>maven-web-application-kkfunda</artifactId>
+  <!-- GROUP & ARTIFACT -->
+  <groupId>com.md</groupId>
+  <artifactId>maven-web-application</artifactId>
   <version>19.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>maven-web-application</name>
   <description>Maven Web Project for Java Project</description>
 
+  <!-- ORGANIZATION -->
   <organization>
-    <name>KK FUNDA</name>
-    <url>http://kkfunda.com</url>
+    <name>MD PRASSADH</name>
+    <url>http://mdprassadh.com</url>
   </organization>
 
-  <!-- CENTRAL VERSION CONTROL -->
+  <!-- PROPERTIES -->
   <properties>
     <java.version>17</java.version>
     <spring.version>5.3.34</spring.version>
@@ -54,7 +56,7 @@
       <version>${spring.version}</version>
     </dependency>
 
-    <!-- Tomcat provides this at runtime -->
+    <!-- Servlet API (provided by Tomcat at runtime) -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -69,7 +71,7 @@
       <version>20231013</version>
     </dependency>
 
-    <!-- Unit tests -->
+    <!-- Unit Testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -79,13 +81,15 @@
 
   </dependencies>
 
-  <!-- BUILD PLUGINS -->
+  <!-- BUILD CONFIG -->
   <build>
+
+    <!-- 🔒 WAR NAME LOCKED FOR CI / DOCKER / K8S -->
     <finalName>maven-web-application</finalName>
 
     <plugins>
 
-      <!-- 1️⃣ COMPILER: Controls Java version -->
+      <!-- Java Compiler -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -96,14 +100,17 @@
         </configuration>
       </plugin>
 
-      <!-- 2️⃣ WAR: Creates WAR file (Java 17 compatible) -->
+      <!-- WAR Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.4.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
 
-      <!-- 3️⃣ SONAR: Enables mvn sonar:sonar -->
+      <!-- SonarQube -->
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
