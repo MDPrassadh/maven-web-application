@@ -5,7 +5,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- GROUP & ARTIFACT -->
+  <!-- Group and Artifact -->
   <groupId>com.md</groupId>
   <artifactId>maven-web-application</artifactId>
   <version>19.0.0-SNAPSHOT</version>
@@ -14,13 +14,13 @@
   <name>maven-web-application</name>
   <description>Maven Web Project for Java Project</description>
 
-  <!-- ORGANIZATION -->
+  <!-- Organization -->
   <organization>
     <name>MD PRASSADH</name>
     <url>http://mdprassadh.com</url>
   </organization>
 
-  <!-- PROPERTIES -->
+  <!-- Properties -->
   <properties>
     <java.version>17</java.version>
     <spring.version>5.3.34</spring.version>
@@ -28,7 +28,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
-  <!-- DEPENDENCIES -->
+  <!-- Dependencies -->
   <dependencies>
 
     <!-- Spring MVC -->
@@ -81,10 +81,10 @@
 
   </dependencies>
 
-  <!-- BUILD CONFIG -->
+  <!-- Build Configuration -->
   <build>
 
-    <!-- 🔒 WAR NAME LOCKED FOR CI / DOCKER / K8S -->
+    <!-- WAR name locked for CI, Docker, and Kubernetes -->
     <finalName>maven-web-application</finalName>
 
     <plugins>
