@@ -47,14 +47,14 @@ jobs:
           | docker login --username AWS --password-stdin \
             770651355673.dkr.ecr.ap-south-1.amazonaws.com
 
-      - name: Build & Push Image
+      - name: Build & tag image
         run: |
-          IMAGE_TAG=${{ github.sha }}
-          docker build -t mdprassadh/maven-war-app:$IMAGE_TAG .
-          docker tag mdprassadh/maven-war-app:$IMAGE_TAG \
-            770651355673.dkr.ecr.ap-south-1.amazonaws.com/maven-war-app:$IMAGE_TAG
-          docker push mdprassadh/maven-war-app:$IMAGE_TAG
-          docker push 770651355673.dkr.ecr.ap-south-1.amazonaws.com/maven-war-app:$IMAGE_TAG
+         IMAGE_TAG=${{ github.sha }}
+         cd docker-build
+         docker build -t mdprassadh/maven-war-app:$IMAGE_TAG .
+         docker tag mdprassadh/maven-war-app:$IMAGE_TAG \
+         770651355673.dkr.ecr.ap-south-1.amazonaws.com/maven-war-app:$IMAGE_TAG
+
 
       - name: Save image tag
         run: echo "${{ github.sha }}" > image-tag.txt
