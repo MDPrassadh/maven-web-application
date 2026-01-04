@@ -13,7 +13,7 @@ spec:
         app: maven-war-app
     spec:
       containers:
-      - name: maven-war-app
-        image: 770651355673.dkr.ecr.ap-south-1.amazonaws.com/maven-war-app:IMAGE_TAG
-        ports:
-        - containerPort: 8080
+        - name: maven-war-app
+          image: 770651355673.dkr.ecr.ap-south-1.amazonaws.com/maven-war-app:${IMAGE_TAG}
+          ports:
+            - containerPort: 8080
