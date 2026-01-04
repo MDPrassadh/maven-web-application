@@ -1,9 +1,8 @@
 name: CI-CD-FINAL-pipeline
 
 on:
-  pushh:
-    branches:
-      - main
+  
+  
   workflow_dispatch:
 
 jobs:
@@ -133,6 +132,7 @@ jobs:
           curl -f -u "${TOMCAT_USER}:${TOMCAT_PASS}" \
             --upload-file "$WAR" \
             "${TOMCAT_URL}/manager/text/deploy?path=/maven-web-application&update=true"
+
 
 
 
