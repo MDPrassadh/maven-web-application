@@ -1,4 +1,4 @@
-name: CI-CD-FINAL-pipeline
+name: CI-CD-K8S-DH-ECR-FINAL-pipeline
 
 on:
   push:
