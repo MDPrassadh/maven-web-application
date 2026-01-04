@@ -55,8 +55,8 @@
 <body>
 
 <header>
-    <h1>Welcome to AZURE GCP CLOUD DEVOPS</h1>
-    <h2>DEVOPS WITH AWS AND AZURE</h2>
+    <h1>AZURE GCP MULTI CLOUD DEVOPS</h1>
+    <h2>AZURE DEVOPS WITH MULTI CLOUD </h2>
 </header>
 
 <div class="content">
