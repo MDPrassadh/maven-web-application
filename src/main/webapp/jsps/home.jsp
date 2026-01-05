@@ -55,8 +55,8 @@
 <body>
 
 <header>
-    <h1> welcome Potti Mamatha </h1>
-    <h2> AZURE DEVOPS WITH MULTI CLOUD </h2>
+    <h1> GEDELA BULLIRAJU </h1>
+    <h2> DEVOPS KING </h2>
 </header>
 
 <div class="content">
@@ -78,9 +78,9 @@
     <div>
         <img src="images/mdprassadh.jpg" alt="MD PRASSADH Logo">
         <p><strong>MD PRASSADH</strong><br>
-        Martha Halli, Bangalore<br>
-        +91-9676831734<br>
-        <a href="mailto:kkeducationblr@gmail.com">Mail to MD PRASSADH</a></p>
+        PAGADALA PETA KKD <br>
+        +91-8074454665<br>
+        <a href="mailto:mdprassadh@gmail.com">Mail to MD PRASSADH</a></p>
     </div>
 
     <p>Service: <a href="services/employee/getEmployeeDetails">Get Employee Details</a></p>
@@ -88,7 +88,7 @@
 </div>
 
 <footer>
-    MD PRASSADH Training, Development Center.<br>
+    MD PRASSADH Trainee, Development Center.<br>
     <small>© 2024 by MD PRASSADH</small>
 </footer>
 
