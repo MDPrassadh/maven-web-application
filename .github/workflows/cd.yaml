@@ -13,14 +13,22 @@ jobs:
     runs-on: [self-hosted, MDP]
 
     steps:
+      # Checkout application source code
       - name: Checkout repo
         uses: actions/checkout@v4
-        
+
+      # Clean any leaked AWS credentials so EC2 instance role is used
+      - name: Clean AWS credentials
+        run: |
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
+
+      # Verify which IAM role is being used by the runner
       - name: Verify AWS identity
         run: aws sts get-caller-identity
 
-
-      # ✅ Download artifact from CI workflow run
+      # Download image tag artifact produced by CI workflow
       - name: Download image tag artifact
         uses: actions/download-artifact@v4
         with:
@@ -28,20 +36,25 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Read image tag and export it as environment variable
       - name: Read image tag
         run: |
           IMAGE_TAG=$(cat image-tag.txt)
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "Using IMAGE_TAG=$IMAGE_TAG"
 
-      
-
+      # Generate kubeconfig using EC2 IAM role
       - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig \
             --region ${{ secrets.AWS_REGION }} \
             --name ${{ secrets.EKS_CLUSTER_NAME }}
 
+      # Validate Kubernetes cluster access before deployment
+      - name: Verify EKS access
+        run: kubectl get nodes
+
+      # Deploy application manifests to EKS
       - name: Deploy to EKS
         run: |
           envsubst < k8s/deployment.yaml | kubectl apply -f -
