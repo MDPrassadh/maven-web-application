@@ -1,0 +1,87 @@
+name: CI-BUILD-IMAGE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  CI:
+    runs-on: [self-hosted, MDP]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+          cache: maven
+
+      - name: Build WAR
+        run: mvn clean package
+
+      # ---------- SonarQube ----------
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.qualitygate.wait=true
+
+      # ---------- Security Scan ----------
+      - name: Install Trivy
+        run: |
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.67.2/trivy_0.67.2_Linux-64bit.deb
+          sudo dpkg -i trivy_0.67.2_Linux-64bit.deb
+
+      - name: Trivy FS Scan
+        run: trivy fs . --severity HIGH,CRITICAL --exit-code 0
+
+      # ---------- Docker Build Context ----------
+      - name: Prepare Docker build context
+        run: |
+          mkdir -p docker-build
+          cp target/maven-web-application.war docker-build/
+          cp Dockerfile docker-build/
+          ls -lh docker-build
+
+      # ---------- DockerHub Authentication ----------
+      - name: DockerHub Login
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login \
+            -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # ---------- ECR Authentication (via EC2 IAM role) ----------
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region ap-south-1 \
+          | docker login --username AWS --password-stdin \
+            770651355673.dkr.ecr.ap-south-1.amazonaws.com
+
+      # ---------- Docker Build & Push ----------
+      - name: Build & tag image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          cd docker-build
+          docker build -t mdprassadh/maven-war-app:$IMAGE_TAG .
+          docker tag mdprassadh/maven-war-app:$IMAGE_TAG \
+            770651355673.dkr.ecr.ap-south-1.amazonaws.com/maven-war-app:$IMAGE_TAG
+
+      - name: Push images
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          docker push mdprassadh/maven-war-app:$IMAGE_TAG
+          docker push 770651355673.dkr.ecr.ap-south-1.amazonaws.com/maven-war-app:$IMAGE_TAG
+
+      # ---------- Pass image tag to CD ----------
+      - name: Save image tag
+        run: echo "${{ github.sha }}" > image-tag.txt
+
+      - name: Upload image tag artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-tag
+          path: image-tag.txt
